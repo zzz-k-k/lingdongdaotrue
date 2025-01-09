@@ -1,12 +1,16 @@
 import { BusinessError } from '@kit.BasicServicesKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
+import router from '@ohos.router';
 import { FloatingWindowViewModel } from '../viewmodels/FloatingWindowViewModel';
 
 @Entry
 @Component
 struct Index {
-  private viewModel: FloatingWindowViewModel = new FloatingWindowViewModel();
+  private viewModel: FloatingWindowViewModel = FloatingWindowViewModel.getInstance();
+  @State currentPage: string = 'home';
+  @State floatingWindowBgColor: string = this.viewModel.getBackgroundColor();
   @State message: string = this.viewModel.getMessage();
+  @State title: string = '悬浮窗';
   @State isShow: boolean = this.viewModel.getIsShow();
   @State posX: number = this.viewModel.getPosX();
   @State posY: number = this.viewModel.getPosY();
@@ -29,76 +33,150 @@ struct Index {
 
   build() {
     Stack() {
-      Scroll() {
-        Column() {
-          Text(this.message)
-            .fontSize(24)
-            .fontWeight(700)
+      if (this.currentPage === 'home') {
+        Scroll() {
+          Column() {
+            Text(this.message)
+              .fontSize(24)
+              .fontWeight(700)
+              .width('100%')
+              .textAlign(TextAlign.Center)
+              .fontFamily('HarmonyHeiTi-Bold')
+              .lineHeight(33)
+            Swiper() {
+              aaaaaa()
+              Banner()
+              eeeeee()
+            }
+            .loop(true)
+            Row() {
+              EnablementItem({ 
+                title: '悬浮窗使用教程',
+                brief: '学习如何使用和控制悬浮窗，掌握基本操作技巧',
+                imageSrc: $r('app.media.jiemianyi')
+              })
+              EnablementItem({ 
+                title: '悬浮窗进阶技巧',
+                brief: '探索悬浮窗的高级特性，实现更多自定义功能',
+                imageSrc: $r('app.media.jiemianer')
+              })
+            }
             .width('100%')
-            .textAlign(TextAlign.Center)
-            .fontFamily('HarmonyHeiTi-Bold')
-            .lineHeight(33)
-          Swiper() {
-            aaaaaa()
-            Banner()
-            eeeeee()
-          }
-          .loop(true)
-          Row() {
-            EnablementItem({ 
-              title: '悬浮窗使用教程',
-              brief: '学习如何使用和控制悬浮窗，掌握基本操作技巧',
-              imageSrc: $r('app.media.jiemianyi')
-            })
-            EnablementItem({ 
-              title: '悬浮窗进阶技巧',
-              brief: '探索悬浮窗的高级特性，实现更多自定义功能',
-              imageSrc: $r('app.media.jiemianer')
-            })
+            .justifyContent(FlexAlign.SpaceEvenly)
+            .margin({ top: 25 })
+
+            Text("教程")
+              .fontSize(20)
+              .fontWeight(FontWeight.Medium)
+              .margin({ top: 15, bottom: 8 })
+              .width('92%')
+
+            Column(){
+              TutorialItem({ 
+                title: 'Step1 基础操作指南',
+                brief: '学习悬浮窗的基本操作，包括拖拽、显示/隐藏等基础功能的使用方法',
+                imageSrc: $r('app.media.jiemiansan')
+              })
+                .margin({ bottom: 12 })
+              TutorialItem({ 
+                title: 'Step2 自定义设置',
+                brief: '了解如何调整悬浮窗的大小、位置、样式等个性化设置选项',
+                imageSrc: $r('app.media.jiemiansi')
+              })
+                .margin({ bottom: 12 })
+              TutorialItem({ 
+                title: 'Step3 高级功能探索',
+                brief: '探索悬浮窗的高级特性，如动画效果、交互响应等进阶功能',
+                imageSrc: $r('app.media.jiemianwu')
+              })
+            }
+            .width('92%')
+            .margin({ top: 6, bottom: 60 })
+            .padding({ left: 4, right: 4 })
           }
           .width('100%')
-          .justifyContent(FlexAlign.SpaceEvenly)
-          .margin({ top: 25 })
+          .padding({ bottom: 48 })
+        }
+        .scrollBar(BarState.Off)
+        .edgeEffect(EdgeEffect.Spring)
+      } else if (this.currentPage === 'settings') {
+        Column() {
+          Column() {
+            Text('悬浮窗标题')
+              .fontSize(16)
+              .fontWeight(FontWeight.Medium)
+              .margin({ top: 20, bottom: 8 })
+            TextInput({ text: this.title })
+              .width('100%')
+              .height(48)
+              .borderRadius(8)
+              .backgroundColor(Color.White)
+              .padding({ left: 16, right: 16 })
+              .onChange((value: string) => {
+                this.title = value;
+              })
 
-          Text("教程")
-            .fontSize(20)
-            .fontWeight(FontWeight.Medium)
-            .margin({ top: 15, bottom: 8 })
-            .width('92%')
+            Text('悬浮窗内容')
+              .fontSize(16)
+              .fontWeight(FontWeight.Medium)
+              .margin({ top: 20, bottom: 8 })
+            TextInput({ text: this.message })
+              .width('100%')
+              .height(48)
+              .borderRadius(8)
+              .backgroundColor(Color.White)
+              .padding({ left: 16, right: 16 })
+              .onChange((value: string) => {
+                this.message = value;
+                this.viewModel.setMessage(value);
+              })
 
-          Column(){
-            TutorialItem({ 
-              title: 'Step1 基础操作指南',
-              brief: '学习悬浮窗的基本操作，包括拖拽、显示/隐藏等基础功能的使用方法',
-              imageSrc: $r('app.media.jiemiansan')
-            })
-              .margin({ bottom: 12 })
-            TutorialItem({ 
-              title: 'Step2 自定义设置',
-              brief: '了解如何调整悬浮窗的大小、位置、样式等个性化设置选项',
-              imageSrc: $r('app.media.jiemiansi')
-            })
-              .margin({ bottom: 12 })
-            TutorialItem({ 
-              title: 'Step3 高级功能探索',
-              brief: '探索悬浮窗的高级特性，如动画效果、交互响应等进阶功能',
-              imageSrc: $r('app.media.jiemianwu')
-            })
+            Text('悬浮窗背景颜色')
+              .fontSize(16)
+              .fontWeight(FontWeight.Medium)
+              .margin({ top: 20, bottom: 12 })
+
+            Flex({ wrap: FlexWrap.Wrap, justifyContent: FlexAlign.SpaceAround }) {
+              ForEach([
+                '#F5F5F5CC',  // 默认灰色
+                '#FFE4E1CC',  // 浅粉红
+                '#E6E6FACC',  // 淡紫色
+                '#F0FFF0CC',  // 淡绿色
+                '#F0F8FFCC',  // 爱丽丝蓝
+                '#FFFFE0CC'   // 浅黄色
+              ], (color: string) => {
+                Column() {
+                  Circle({ width: 48, height: 48 })
+                    .fill(color)
+                    .border({
+                      width: this.floatingWindowBgColor === color ? 2 : 0,
+                      color: '#4E86FF'
+                    })
+                    .onClick(() => {
+                      this.floatingWindowBgColor = color;
+                      this.viewModel.setBackgroundColor(color);
+                    })
+                }
+                .margin(8)
+              })
+            }
+            .padding(16)
+            .backgroundColor(Color.White)
+            .borderRadius(16)
+            .margin({ top: 8 })
           }
           .width('92%')
-          .margin({ top: 6, bottom: 60 })
-          .padding({ left: 4, right: 4 })
+          .padding(16)
         }
         .width('100%')
-        .padding({ bottom: 48 })
+        .height('100%')
+        .backgroundColor('#F5F5F5')
       }
-      .scrollBar(BarState.Off)
-      .edgeEffect(EdgeEffect.Spring)
 
       if (this.isShow) {
         Column() {
           Row() {
-            Text('悬浮窗')
+            Text(this.title)
               .fontSize(20)
               .fontWeight(FontWeight.Bold)
               .fontColor('#333333')
@@ -121,7 +199,7 @@ struct Index {
           .padding(10)
           .backgroundColor('rgba(238, 238, 238, 0.5)')
 
-          Text('这是一个简单的悬浮窗')
+          Text(this.message)
             .fontSize(16)
             .padding(10)
             .fontColor('#333333')
@@ -152,7 +230,7 @@ struct Index {
         }
         .width(this.viewModel.getConstants().PANEL_WIDTH)
         .height(this.viewModel.getConstants().PANEL_HEIGHT)
-        .backgroundColor('rgba(245, 245, 245, 0.8)')
+        .backgroundColor(this.floatingWindowBgColor)
         .backdropBlur(8)
         .borderRadius(8)
         .shadow({ radius: 6, color: '#1F000000', offsetX: 2, offsetY: 4 })
@@ -207,7 +285,7 @@ struct Index {
               .objectFit(ImageFit.Contain)
             Text('教程')
               .fontSize(14)
-              .fontColor('#333333')
+              .fontColor(this.currentPage === 'home' ? '#4E86FF' : '#333333')
               .margin({ top: 4 })
           }
           .alignItems(HorizontalAlign.Center)
@@ -217,7 +295,7 @@ struct Index {
         .layoutWeight(1)
         .height(56)
         .onClick(() => {
-          hilog.info(0x0000, 'testTag', '%{public}s', '点击了教程按钮');
+          this.currentPage = 'home';
         })
 
         Button({ type: ButtonType.Normal }) {
@@ -228,7 +306,7 @@ struct Index {
               .objectFit(ImageFit.Contain)
             Text('设置')
               .fontSize(14)
-              .fontColor('#333333')
+              .fontColor(this.currentPage === 'settings' ? '#4E86FF' : '#333333')
               .margin({ top: 4 })
           }
           .alignItems(HorizontalAlign.Center)
@@ -238,7 +316,7 @@ struct Index {
         .layoutWeight(1)
         .height(56)
         .onClick(() => {
-          hilog.info(0x0000, 'testTag', '%{public}s', '点击了设置按钮');
+          this.currentPage = 'settings';
         })
       }
       .width('100%')

@@ -1,14 +1,24 @@
 import { FloatingWindowModel, WindowConstants } from '../models/FloatingWindowModel';
 
 export class FloatingWindowViewModel {
-  private model: FloatingWindowModel;
-  
-  constructor() {
-    this.model = new FloatingWindowModel();
+  private static instance: FloatingWindowViewModel = new FloatingWindowViewModel();
+  private model: FloatingWindowModel = new FloatingWindowModel();
+  private backgroundColor: string = '#F5F5F5CC';
+
+  private constructor() {
+    // 私有构造函数确保单例
+  }
+
+  static getInstance(): FloatingWindowViewModel {
+    return FloatingWindowViewModel.instance;
   }
 
   getMessage(): string {
     return this.model.message;
+  }
+
+  setMessage(value: string): void {
+    this.model.message = value;
   }
 
   getIsShow(): boolean {
@@ -49,5 +59,17 @@ export class FloatingWindowViewModel {
       PANEL_WIDTH: this.model.PANEL_WIDTH,
       PANEL_HEIGHT: this.model.PANEL_HEIGHT
     };
+  }
+
+  getBackgroundColor(): string {
+    return this.backgroundColor;
+  }
+
+  setBackgroundColor(color: string): void {
+    this.backgroundColor = color;
+  }
+
+  static setBackgroundColor(color: string): void {
+    FloatingWindowViewModel.instance.setBackgroundColor(color);
   }
 } 
