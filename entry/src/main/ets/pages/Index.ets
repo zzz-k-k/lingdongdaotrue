@@ -29,61 +29,71 @@ struct Index {
 
   build() {
     Stack() {
-      Column() {
-        Text(this.message)
-          .fontSize(24)
-          .fontWeight(700)
+      Scroll() {
+        Column() {
+          Text(this.message)
+            .fontSize(24)
+            .fontWeight(700)
+            .width('100%')
+            .textAlign(TextAlign.Center)
+            .fontFamily('HarmonyHeiTi-Bold')
+            .lineHeight(33)
+          Swiper() {
+            aaaaaa()
+            Banner()
+            eeeeee()
+          }
+          .loop(true)
+          Row() {
+            EnablementItem({ 
+              title: '悬浮窗使用教程',
+              brief: '学习如何使用和控制悬浮窗，掌握基本操作技巧',
+              imageSrc: $r('app.media.jiemianyi')
+            })
+            EnablementItem({ 
+              title: '悬浮窗进阶技巧',
+              brief: '探索悬浮窗的高级特性，实现更多自定义功能',
+              imageSrc: $r('app.media.jiemianer')
+            })
+          }
           .width('100%')
-          .textAlign(TextAlign.Center)
-          .fontFamily('HarmonyHeiTi-Bold')
-          .lineHeight(33)
-        Swiper() {
-          aaaaaa()
-          Banner()
-          eeeeee()
-        }
-        .loop(true)
-        Row() {
-          EnablementItem({ 
-            title: '悬浮窗使用教程',
-            brief: '学习如何使用和控制悬浮窗，掌握基本操作技巧'
-          })
-          EnablementItem({ 
-            title: '悬浮窗进阶技巧',
-            brief: '探索悬浮窗的高级特性，实现更多自定义功能'
-          })
+          .justifyContent(FlexAlign.SpaceEvenly)
+          .margin({ top: 25 })
+
+          Text("教程")
+            .fontSize(20)
+            .fontWeight(FontWeight.Medium)
+            .margin({ top: 15, bottom: 8 })
+            .width('92%')
+
+          Column(){
+            TutorialItem({ 
+              title: 'Step1 基础操作指南',
+              brief: '学习悬浮窗的基本操作，包括拖拽、显示/隐藏等基础功能的使用方法',
+              imageSrc: $r('app.media.jiemiansan')
+            })
+              .margin({ bottom: 12 })
+            TutorialItem({ 
+              title: 'Step2 自定义设置',
+              brief: '了解如何调整悬浮窗的大小、位置、样式等个性化设置选项',
+              imageSrc: $r('app.media.jiemiansi')
+            })
+              .margin({ bottom: 12 })
+            TutorialItem({ 
+              title: 'Step3 高级功能探索',
+              brief: '探索悬浮窗的高级特性，如动画效果、交互响应等进阶功能',
+              imageSrc: $r('app.media.jiemianwu')
+            })
+          }
+          .width('92%')
+          .margin({ top: 6, bottom: 60 })
+          .padding({ left: 4, right: 4 })
         }
         .width('100%')
-        .justifyContent(FlexAlign.SpaceEvenly)
-        .margin({ top: 25 })
-
-        Text("教程")
-          .fontSize(20)
-          .fontWeight(FontWeight.Medium)
-          .margin({ top: 15, bottom: 8 })
-          .width('92%')
-
-        Column(){
-          TutorialItem({ 
-            title: 'Step1 基础操作指南',
-            brief: '学习悬浮窗的基本操作，包括拖拽、显示/隐藏等基础功能的使用方法'
-          })
-            .margin({ bottom: 12 })
-          TutorialItem({ 
-            title: 'Step2 自定义设置',
-            brief: '了解如何调整悬浮窗的大小、位置、样式等个性化设置选项'
-          })
-            .margin({ bottom: 12 })
-          TutorialItem({ 
-            title: 'Step3 高级功能探索',
-            brief: '探索悬浮窗的高级特性，如动画效果、交互响应等进阶功能'
-          })
-        }
-        .width('92%')
-        .margin({ top: 6 })
-        .padding({ left: 4, right: 4 })
+        .padding({ bottom: 48 })
       }
-      .width('100%')
+      .scrollBar(BarState.Off)
+      .edgeEffect(EdgeEffect.Spring)
 
       if (this.isShow) {
         Column() {
@@ -187,6 +197,56 @@ struct Index {
             this.moveToTopCenter();
           })
       }
+
+      Row() {
+        Button({ type: ButtonType.Normal }) {
+          Column() {
+            Image($r('app.media.fangdajing'))
+              .width(24)
+              .height(24)
+              .objectFit(ImageFit.Contain)
+            Text('教程')
+              .fontSize(14)
+              .fontColor('#333333')
+              .margin({ top: 4 })
+          }
+          .alignItems(HorizontalAlign.Center)
+          .width('100%')
+        }
+        .backgroundColor(Color.White)
+        .layoutWeight(1)
+        .height(56)
+        .onClick(() => {
+          hilog.info(0x0000, 'testTag', '%{public}s', '点击了教程按钮');
+        })
+
+        Button({ type: ButtonType.Normal }) {
+          Column() {
+            Image($r('app.media.chilun'))
+              .width(24)
+              .height(24)
+              .objectFit(ImageFit.Contain)
+            Text('设置')
+              .fontSize(14)
+              .fontColor('#333333')
+              .margin({ top: 4 })
+          }
+          .alignItems(HorizontalAlign.Center)
+          .width('100%')
+        }
+        .backgroundColor(Color.White)
+        .layoutWeight(1)
+        .height(56)
+        .onClick(() => {
+          hilog.info(0x0000, 'testTag', '%{public}s', '点击了设置按钮');
+        })
+      }
+      .width('100%')
+      .backgroundColor(Color.White)
+      .position({ x: 0, y: '100%' })
+      .translate({ y: -56 })
+      .shadow({ radius: 12, color: 'rgba(0, 0, 0, 0.1)', offsetY: -2 })
+      .zIndex(2)
     }
     .width('100%')
     .height('100%')
@@ -243,10 +303,11 @@ struct aaaaaa {
 struct EnablementItem {
   @Prop title: string = '如何受用悬浮窗';
   @Prop brief: string = '使用悬浮窗的一些小技巧';
+  @Prop imageSrc: Resource = $r('app.media.jiemianyi');
 
   build() {
     Column() {
-      Image($r('app.media.enablement_pic1'))
+      Image(this.imageSrc)
         .width('100%')
         .objectFit(ImageFit.Cover)
         .height(96)
@@ -287,6 +348,7 @@ struct EnablementItem {
 struct TutorialItem {
   @Prop title: string = 'Step1 快速入门介绍';
   @Prop brief: string = '本篇教程实现了快速入门——一个用于了解和学习HarmonyOS的应用程序。';
+  @Prop imageSrc: Resource = $r('app.media.jiemiansan');
 
   build() {
     Row() {
@@ -316,7 +378,7 @@ struct TutorialItem {
       .alignItems(HorizontalAlign.Start)
       .margin({ right: 12 })
 
-      Image($r('app.media.enablement_pic1'))
+      Image(this.imageSrc)
         .objectFit(ImageFit.Cover)
         .height(64)
         .width(108)
