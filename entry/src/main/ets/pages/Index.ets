@@ -1,40 +1,34 @@
 import { BusinessError } from '@kit.BasicServicesKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
+import { FloatingWindowViewModel } from '../viewmodels/FloatingWindowViewModel';
 
 @Entry
 @Component
 struct Index {
-  @State message: string = '一个幽默风趣的牛仔';
-  @State isShow: boolean = true;
-  @State posX: number = 100;
-  @State posY: number = 100;
+  private viewModel: FloatingWindowViewModel = new FloatingWindowViewModel();
+  @State message: string = this.viewModel.getMessage();
+  @State isShow: boolean = this.viewModel.getIsShow();
+  @State posX: number = this.viewModel.getPosX();
+  @State posY: number = this.viewModel.getPosY();
   private startPosX: number = 0;
   private startPosY: number = 0;
   private startTouchX: number = 0;
   private startTouchY: number = 0;
   private isDragging: boolean = false;
-  private readonly WINDOW_WIDTH: number = 360;   // 设备宽度（vp）
-  private readonly WINDOW_HEIGHT: number = 640;  // 设备高度（vp）
-  private readonly PANEL_WIDTH: number = 300;    // 悬浮窗宽度（vp）
-  private readonly PANEL_HEIGHT: number = 200;   // 悬浮窗高度（vp）
 
   private moveToTopCenter() {
-    // 计算顶部中间位置
-    const centerX = 30; // (360 - 300) / 2
-    const topY = 20;    // 距离顶部20vp
-    
-    // 使用动画移动到顶部中间
     animateTo({
       duration: 300,
       curve: Curve.EaseInOut,
     }, () => {
-      this.posX = centerX;
-      this.posY = topY;
+      this.viewModel.moveToTopCenter();
+      this.posX = this.viewModel.getPosX();
+      this.posY = this.viewModel.getPosY();
     })
   }
 
   build() {
-    Stack() {  // 使用 Stack 作为根组件，这样可以让内容和悬浮窗正确叠加
+    Stack() {
       Column() {
         Text(this.message)
           .fontSize(24)
@@ -50,8 +44,14 @@ struct Index {
         }
         .loop(true)
         Row() {
-          EnablementItem()
-          EnablementItem()
+          EnablementItem({ 
+            title: '悬浮窗使用教程',
+            brief: '学习如何使用和控制悬浮窗，掌握基本操作技巧'
+          })
+          EnablementItem({ 
+            title: '悬浮窗进阶技巧',
+            brief: '探索悬浮窗的高级特性，实现更多自定义功能'
+          })
         }
         .width('100%')
         .justifyContent(FlexAlign.SpaceEvenly)
@@ -64,11 +64,20 @@ struct Index {
           .width('92%')
 
         Column(){
-          TutorialItem()
+          TutorialItem({ 
+            title: 'Step1 基础操作指南',
+            brief: '学习悬浮窗的基本操作，包括拖拽、显示/隐藏等基础功能的使用方法'
+          })
             .margin({ bottom: 12 })
-          TutorialItem()
+          TutorialItem({ 
+            title: 'Step2 自定义设置',
+            brief: '了解如何调整悬浮窗的大小、位置、样式等个性化设置选项'
+          })
             .margin({ bottom: 12 })
-          TutorialItem()
+          TutorialItem({ 
+            title: 'Step3 高级功能探索',
+            brief: '探索悬浮窗的高级特性，如动画效果、交互响应等进阶功能'
+          })
         }
         .width('92%')
         .margin({ top: 6 })
@@ -77,7 +86,6 @@ struct Index {
       .width('100%')
 
       if (this.isShow) {
-        // 悬浮窗
         Column() {
           Row() {
             Text('悬浮窗')
@@ -89,7 +97,8 @@ struct Index {
               .fontSize(24)
               .fontColor('#666666')
               .onClick(() => {
-                this.isShow = false
+                this.viewModel.setIsShow(false);
+                this.isShow = false;
               })
               .padding(8)
               .height(40)
@@ -131,8 +140,8 @@ struct Index {
           .justifyContent(FlexAlign.Center)
           .padding({ bottom: 10, left: 16, right: 16 })
         }
-        .width(this.PANEL_WIDTH)
-        .height(this.PANEL_HEIGHT)
+        .width(this.viewModel.getConstants().PANEL_WIDTH)
+        .height(this.viewModel.getConstants().PANEL_HEIGHT)
         .backgroundColor('rgba(245, 245, 245, 0.8)')
         .backdropBlur(8)
         .borderRadius(8)
@@ -143,7 +152,6 @@ struct Index {
             .onActionStart((event: GestureEvent) => {
               if (event && event.offsetX !== undefined && event.offsetY !== undefined) {
                 this.isDragging = true;
-                // 记录开始拖动时的位置
                 this.startPosX = this.posX;
                 this.startPosY = this.posY;
                 this.startTouchX = event.offsetX;
@@ -155,17 +163,14 @@ struct Index {
                 return;
               }
 
-              // 计算相对于起始触摸点的偏移
               const deltaX = event.offsetX - this.startTouchX;
               const deltaY = event.offsetY - this.startTouchY;
 
-              // 直接更新位置到新位置
-              this.posX = this.startPosX + deltaX;
-              this.posY = this.startPosY + deltaY;
-
-              // 限制在屏幕范围内
-              this.posX = Math.max(0, Math.min(this.posX, this.WINDOW_WIDTH - this.PANEL_WIDTH));
-              this.posY = Math.max(0, Math.min(this.posY, this.WINDOW_HEIGHT - this.PANEL_HEIGHT));
+              this.viewModel.setPosX(this.startPosX + deltaX);
+              this.viewModel.setPosY(this.startPosY + deltaY);
+              
+              this.posX = this.viewModel.getPosX();
+              this.posY = this.viewModel.getPosY();
             })
             .onActionEnd(() => {
               this.isDragging = false;
@@ -177,6 +182,7 @@ struct Index {
         Button('显示悬浮窗')
           .position({ x: '20vp', y: '20vp' })
           .onClick(() => {
+            this.viewModel.setIsShow(true);
             this.isShow = true;
             this.moveToTopCenter();
           })
@@ -188,7 +194,6 @@ struct Index {
 
   aboutToAppear() {
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onCreate');
-    // 初始化时移动到顶部中间
     this.moveToTopCenter();
   }
 }
@@ -236,8 +241,8 @@ struct aaaaaa {
 @Preview
 @Component
 struct EnablementItem {
-  private title: string = 'HarmonyOS第一课';
-  private brief: string = '基于真实的开发场景，提供向导式学习，多维度融合课程等内容，给开发者提供全新的学习��验。';
+  @Prop title: string = '如何受用悬浮窗';
+  @Prop brief: string = '使用悬浮窗的一些小技巧';
 
   build() {
     Column() {
@@ -280,8 +285,8 @@ struct EnablementItem {
 @Preview
 @Component
 struct TutorialItem {
-  private title: string = 'Step1 快速入门介绍';
-  private brief: string = '本篇教程实现了快速入门——一个用于了解和学习HarmonyOS的应用程序。';
+  @Prop title: string = 'Step1 快速入门介绍';
+  @Prop brief: string = '本篇教程实现了快速入门——一个用于了解和学习HarmonyOS的应用程序。';
 
   build() {
     Row() {
