@@ -53,12 +53,14 @@ struct Index {
               EnablementItem({ 
                 title: '悬浮窗使用教程',
                 brief: '学习如何使用和控制悬浮窗，掌握基本操作技巧',
-                imageSrc: $r('app.media.jiemianyi')
+                imageSrc: $r('app.media.jiemianyi'),
+                type: 'basic'
               })
               EnablementItem({ 
                 title: '悬浮窗进阶技巧',
                 brief: '探索悬浮窗的高级特性，实现更多自定义功能',
-                imageSrc: $r('app.media.jiemianer')
+                imageSrc: $r('app.media.jiemianer'),
+                type: 'advanced'
               })
             }
             .width('100%')
@@ -382,6 +384,7 @@ struct EnablementItem {
   @Prop title: string = '如何受用悬浮窗';
   @Prop brief: string = '使用悬浮窗的一些小技巧';
   @Prop imageSrc: Resource = $r('app.media.jiemianyi');
+  @Prop type: string = 'basic';
 
   build() {
     Column() {
@@ -419,6 +422,15 @@ struct EnablementItem {
     .height(169)
     .borderRadius(16)
     .backgroundColor(Color.White)
+    .onClick(() => {
+      router.pushUrl({
+        url: 'pages/TutorialDetail',
+        params: {
+          title: this.title,
+          type: this.type
+        }
+      });
+    })
   }
 }
 @Preview
